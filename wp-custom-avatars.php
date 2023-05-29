@@ -2,11 +2,12 @@
 /*
 Plugin Name: Custom Avatars
 Plugin URI: http://www.ielectrify.com/resources/bloggingtips/custom-wordpress-avatars/
-Description: Give your WordPress blog custom avatars for users if they're not already using Gravatar.  Created by <a href="http://www.ielectrify.com">iElectrify</a> and <a href="http://www.fahdmurtaza.com">Fahd Murtaza</a>
+Description: Give your WordPress blog custom avatars for users if they're not already using Gravatar. Created by <a href="https://www.ielectrify.com">iElectrify</a> and <a href="https://www.fahdmurtaza.com">Fahd Murtaza</a>
 Author: Sherice Jacob & Fahd Murtaza
 Author URI: http://www.ielectrify.com
 Version: 1.1
 */
+
 // Pre-2.6 compatibility
 if ( ! defined( 'WP_CONTENT_URL' ) ) {
 	define( 'WP_CONTENT_URL', get_option( 'siteurl' ) . '/wp-content' );
@@ -22,34 +23,30 @@ if ( ! defined( 'WP_PLUGIN_DIR' ) ) {
 }
 
 function validate_gravatar( $email ) {
-	$uri     = 'http://www.gravatar.com/avatar.php?gravatar_id=' . md5( $email ) . '?&default=identicon&r=any&size=80';
-	$headers = wp_get_http_headers( $uri );
+	$uri     = 'https://www.gravatar.com/avatar.php?gravatar_id=' . md5( $email ) . '?&default=identicon&r=any&size=80';
+	$headers = wp_remote_head( $uri );
 
 	// Check the headers
-	if ( ! is_array( $headers ) ) :
-		$has_valid_avatar = false;
-	elseif ( isset( $headers["content-disposition"] ) ) :
-		$has_valid_avatar = true;
-	else :
-		$has_valid_avatar = false;
-	endif;
+	if ( is_wp_error( $headers ) || ! isset( $headers['response'] ) || $headers['response']['code'] !== 200 ) {
+		return false;
+	}
 
-	return $has_valid_avatar;
+	return true;
 }
 
-function getImagesFromDir() {
-//if ($handle = opendir(dirname(__FILE__).'\\images\\')) {
-	if ( $handle = opendir( dirname( __FILE__ ) . '/images/' ) ) {
-		$dir_array = array();
+function get_images_from_dir() {
+	$dir_path  = plugin_dir_path( __FILE__ ) . 'images/';
+	$dir_array = array();
+	if ( $handle = opendir( $dir_path ) ) {
 		while ( false !== ( $file = readdir( $handle ) ) ) {
 			if ( $file != "." && $file != ".." ) {
 				$dir_array[] = $file;
 			}
 		}
 		closedir( $handle );
-
-		return $dir_array[ rand( 0, count( $dir_array ) - 1 ) ];
 	}
+
+	return $dir_array[ array_rand( $dir_array ) ];
 }
 
 function parse_attributes( $input ) {
@@ -59,6 +56,8 @@ function parse_attributes( $input ) {
 			return $b;
 		}
 	}
+
+	return '';
 }
 
 function wavatar_comment_author( $args ) {
@@ -67,11 +66,13 @@ function wavatar_comment_author( $args ) {
 	if ( ! validate_gravatar( $comment->comment_author_email ) ) {
 		$attr = parse_attributes( $args );
 
-		return "<img class='wavatar' src='" . WP_PLUGIN_URL . "/wordpress-custom-avatars-plugin/images/" . getImagesFromDir() . "' width='" . $attr . "' height='" . $attr . "' alt='Wavatar' />";
+		$image_url = WP_PLUGIN_URL . '/wordpress-custom-avatars-plugin/images/' . get_images_from_dir();
+		$img_html  = "<img class='wavatar' src='{$image_url}' width='{$attr}' height='{$attr}' alt='Wavatar' />";
+
+		return $img_html;
 	} else {
 		return $args;
 	}
 }
 
 add_filter( 'get_avatar', 'wavatar_comment_author', 0 );
-
