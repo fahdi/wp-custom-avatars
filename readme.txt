@@ -3,7 +3,7 @@ Contributors: sherice, fahdi
 Donate link: http://www.fahdmurtaza.com/wordpress-plugins/donate/
 Tags: custom, avatar, random, new, fresh, avatars, comments, form, comment
 Requires at least: 3.3
-Tested up to: 5.8
+Tested up to: 6.2.2
 Stable tag: 1.2
 
 This plugin allows you to give visitors a custom avatar theme if they don't have a Gravatar.
@@ -59,7 +59,9 @@ If your WordPress theme does not support avatars (which is rare), you can manual
 
 `<?php get_avatar(); ?>`
 
-Avatars should be sized at 48x48 pixels. You can use a free graphics viewer/resizer such as IrfanView (available at www.irfanview.com) to resize your avatars. For themed icons that are free for personal and commercial use, visit www.iconfinder.net.
+Avatars should be sized at 48
+
+x48 pixels. You can use a free graphics viewer/resizer such as IrfanView (available at www.irfanview.com) to resize your avatars. For themed icons that are free for personal and commercial use, visit www.iconfinder.net.
 
 Once you have your avatars ready, upload them to the 'custom-avatars/images' folder in your WordPress plugins area. That's it! Enjoy!
 
@@ -78,7 +80,7 @@ For commercial assistance, you can contact any of the developers at www.ielectri
 
 == Changelog ==
 = 1.2 (May 29, 2023) =
-* Added compatibility for WordPress 5.8.
+* Added compatibility for WordPress 6.2.2.
 * Updated tags and tested up to version for repository search ease.
 
 = 1.1 =
@@ -89,11 +91,10 @@ Initial plugin release. (01/12/12)
 
 == Upgrade Notice ==
 = 1.2 =
-Upgrade to the latest version for compatibility with WordPress 5.8.
+Upgrade to the latest version for compatibility with WordPress 6.2.2.
 
 = 1.1 =
 Upgrade if you want to benefit from the new tags added for repository search ease.
 
 = 1.0 =
 No reason to upgrade. Install if you need and enjoy!
-
