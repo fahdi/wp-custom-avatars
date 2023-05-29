@@ -1,4 +1,4 @@
-# Custom Avatars
+# Custom User Avatars for WordPress 
 
 Custom Avatars is a WordPress plugin that allows you to give visitors custom avatars for their comments if they don't have a Gravatar. This plugin enhances the visual appeal of your WordPress blog by providing a unique avatar theme for users without a Gravatar.
 
