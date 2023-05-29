@@ -77,7 +77,7 @@ Please post your suggestions in the plugin forum, and I will get back to you.
 For commercial assistance, you can contact any of the developers at www.ielectrify.com or www.fahdmurtaza.com.
 
 == Changelog ==
-= 1.2 =
+= 1.2 (May 29, 2023) =
 * Added compatibility for WordPress 5.8.
 * Updated tags and tested up to version for repository search ease.
 
