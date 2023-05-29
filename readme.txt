@@ -79,9 +79,16 @@ Please post your suggestions in the plugin forum, and I will get back to you.
 For commercial assistance, you can contact any of the developers at www.ielectrify.com or www.fahdmurtaza.com.
 
 == Changelog ==
+
 = 1.2 (May 29, 2023) =
 * Added compatibility for WordPress 6.2.2.
 * Updated tags and tested up to version for repository search ease.
+* Refactored the plugin code to adhere to WordPress coding standards and best practices.
+* Prefixed function variables with 'wpca_' to follow naming conventions.
+* Reorganized the installation instructions for better clarity.
+* Updated the readme file with the latest installation instructions and information.
+* Applied missing standards for WordPress plugin development.
+* Improved the overall code readability and formatting.
 
 = 1.1 =
 No functional changes. Only added new tags for repository search ease.
@@ -98,3 +105,5 @@ Upgrade if you want to benefit from the new tags added for repository search eas
 
 = 1.0 =
 No reason to upgrade. Install if you need and enjoy!
+
+
