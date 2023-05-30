@@ -98,6 +98,11 @@ function wpca_wavatar_comment_author($wpca_args)
 {
 	global $comment;
 
+	// If $comment is null, return early
+	if ($comment === null) {
+		return $wpca_args;
+	}
+
 	if (!wpca_validate_gravatar($comment->comment_author_email)) {
 		$wpca_attr = wpca_parse_attributes($wpca_args);
 
