@@ -8,24 +8,24 @@
  * Version: 1.2.0
  */
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 /**
  * Pre-2.6 compatibility
  */
-if (!defined('WP_CONTENT_URL')) {
-	define('WP_CONTENT_URL', get_option('siteurl') . '/wp-content');
+if ( ! defined( 'WP_CONTENT_URL' ) ) {
+	define( 'WP_CONTENT_URL', get_option( 'siteurl' ) . '/wp-content' );
 }
-if (!defined('WP_CONTENT_DIR')) {
-	define('WP_CONTENT_DIR', ABSPATH . 'wp-content');
+if ( ! defined( 'WP_CONTENT_DIR' ) ) {
+	define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
 }
-if (!defined('WP_PLUGIN_URL')) {
-	define('WP_PLUGIN_URL', WP_CONTENT_URL . '/plugins');
+if ( ! defined( 'WP_PLUGIN_URL' ) ) {
+	define( 'WP_PLUGIN_URL', WP_CONTENT_URL . '/plugins' );
 }
-if (!defined('WP_PLUGIN_DIR')) {
-	define('WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins');
+if ( ! defined( 'WP_PLUGIN_DIR' ) ) {
+	define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 }
 
 /**
@@ -35,12 +35,11 @@ if (!defined('WP_PLUGIN_DIR')) {
  *
  * @return bool Whether the Gravatar is valid or not.
  */
-function wpca_validate_gravatar($wpca_email)
-{
-	$wpca_uri = 'https://www.gravatar.com/avatar.php?gravatar_id=' . md5($wpca_email) . '?&default=identicon&r=any&size=80';
-	$wpca_headers = wp_remote_head($wpca_uri);
+function wpca_validate_gravatar( $wpca_email ) {
+	$wpca_uri     = 'https://www.gravatar.com/avatar.php?gravatar_id=' . md5( $wpca_email ) . '?&default=identicon&r=any&size=80';
+	$wpca_headers = wp_remote_head( $wpca_uri );
 
-	if (is_wp_error($wpca_headers) || !isset($wpca_headers['response']) || $wpca_headers['response']['code'] !== 200) {
+	if ( is_wp_error( $wpca_headers ) || ! isset( $wpca_headers['response'] ) || $wpca_headers['response']['code'] !== 200 ) {
 		return false;
 	}
 
@@ -52,21 +51,20 @@ function wpca_validate_gravatar($wpca_email)
  *
  * @return string Randomly selected image from the directory.
  */
-function wpca_get_images_from_dir()
-{
-	$wpca_dir_path = plugin_dir_path(__FILE__) . 'images/';
+function wpca_get_images_from_dir() {
+	$wpca_dir_path  = plugin_dir_path( __FILE__ ) . 'images/';
 	$wpca_dir_array = [];
 
-	if ($wpca_handle = opendir($wpca_dir_path)) {
-		while (false !== ($wpca_file = readdir($wpca_handle))) {
-			if ($wpca_file != "." && $wpca_file != "..") {
+	if ( $wpca_handle = opendir( $wpca_dir_path ) ) {
+		while ( false !== ( $wpca_file = readdir( $wpca_handle ) ) ) {
+			if ( $wpca_file != "." && $wpca_file != ".." ) {
 				$wpca_dir_array[] = $wpca_file;
 			}
 		}
-		closedir($wpca_handle);
+		closedir( $wpca_handle );
 	}
 
-	return $wpca_dir_array[array_rand($wpca_dir_array)];
+	return $wpca_dir_array[ array_rand( $wpca_dir_array ) ];
 }
 
 /**
@@ -76,14 +74,14 @@ function wpca_get_images_from_dir()
  *
  * @return string Attribute value.
  */
-function wpca_parse_attributes($wpca_input)
-{
-	$wpca_attr = simplexml_load_string($wpca_input);
-	foreach ($wpca_attr->attributes() as $wpca_a => $wpca_b) {
-		if ($wpca_a == "width") {
+function wpca_parse_attributes( $wpca_input ) {
+	$wpca_attr = simplexml_load_string( $wpca_input );
+	foreach ( $wpca_attr->attributes() as $wpca_a => $wpca_b ) {
+		if ( $wpca_a == "width" ) {
 			return $wpca_b;
 		}
 	}
+
 	return '';
 }
 
@@ -94,24 +92,68 @@ function wpca_parse_attributes($wpca_input)
  *
  * @return string Modified avatar HTML.
  */
-function wpca_wavatar_comment_author($wpca_args)
-{
+function wpca_wavatar_comment_author( $wpca_args ) {
 	global $comment;
 
 	// If $comment is null, return early
-	if ($comment === null) {
+	if ( $comment === null ) {
 		return $wpca_args;
 	}
 
-	if (!wpca_validate_gravatar($comment->comment_author_email)) {
-		$wpca_attr = wpca_parse_attributes($wpca_args);
+	// Get user by email
+	$user = get_user_by( 'email', $comment->comment_author_email );
+
+	if ( $user ) {
+		// Get custom avatar URL
+		$custom_avatar_url = get_user_meta( $user->ID, 'custom_avatar', true );
+
+		if ( $custom_avatar_url ) {
+			// If custom avatar is set, use it
+			$wpca_attr     = wpca_parse_attributes( $wpca_args );
+			$wpca_img_html = "<img class='wavatar' src='{$custom_avatar_url}' width='{$wpca_attr}' height='{$wpca_attr}' alt='Favatar' />";
+
+			return $wpca_img_html;
+		}
+	}
+
+	if ( ! wpca_validate_gravatar( $comment->comment_author_email ) ) {
+		$wpca_attr = wpca_parse_attributes( $wpca_args );
 
 		$wpca_image_url = WP_PLUGIN_URL . '/custom-avatars-plugin/images/' . wpca_get_images_from_dir();
-		$wpca_img_html = "<img class='wavatar' src='{$wpca_image_url}' width='{$wpca_attr}' height='{$wpca_attr}' alt='Favatar' />";
+		$wpca_img_html  = "<img class='wavatar' src='{$wpca_image_url}' width='{$wpca_attr}' height='{$wpca_attr}' alt='Favatar' />";
+
 		return $wpca_img_html;
 	} else {
 		return $wpca_args;
 	}
 }
 
-add_filter('get_avatar', 'wpca_wavatar_comment_author', 10, 3);
+add_filter( 'get_avatar', 'wpca_wavatar_comment_author', 10, 3 );
+
+/**
+ * Handle the file upload on the server side.
+ */
+function handle_custom_avatar_upload() {
+	if ( isset( $_FILES['custom_avatar'] ) ) {
+		$uploadedfile     = $_FILES['custom_avatar'];
+		$upload_overrides = array( 'test_form' => false );
+		$movefile         = wp_handle_upload( $uploadedfile, $upload_overrides );
+
+		if ( $movefile && ! isset( $movefile['error'] ) ) {
+			// File is valid, and was successfully uploaded.
+			// Now save it as user meta.
+			$current_user = wp_get_current_user();
+			update_user_meta( $current_user->ID, 'custom_avatar', $movefile['url'] );
+		} else {
+			/**
+			 * Error generated by _wp_handle_upload()
+			 * @see _wp_handle_upload() in wp-admin/includes/file.php
+			 */
+			echo $movefile['error'];
+		}
+	}
+	wp_redirect( $_SERVER['HTTP_REFERER'] );
+	exit;
+}
+
+add_action( 'admin_post_custom_avatar_upload', 'handle_custom_avatar_upload' );
