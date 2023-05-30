@@ -5,7 +5,7 @@
  * Description: Give your WordPress blog custom avatars for users if they're not already using Gravatar. Created by <a href="https://www.ielectrify.com">iElectrify</a> and <a href="https://www.fahdmurtaza.com">Fahd Murtaza</a>
  * Author: Sherice Jacob & Fahad Murtaza
  * Author URI: http://www.ielectrify.com
- * Version: 1.2
+ * Version: 1.2.0
  */
 
 if (!defined('ABSPATH')) {
